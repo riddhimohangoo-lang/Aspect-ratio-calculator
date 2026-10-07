@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aspect Ratio Calculator</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;padding:30px;background:#121e32;color:#fff;
+  font-family:Arial,sans-serif
+}
+.app{max-width:850px;margin:auto}
+header{display:flex;gap:12px;align-items:center;margin-bottom:25px}
+.num{font-size:38px;font-weight:bold;color:#3dd4cc}
+h1{margin:0;font-size:25px}
+header p{margin:4px 0;color:#91a4bf}
+
+.main{display:grid;grid-template-columns:300px 1fr;gap:16px}
+.box{background:#18263d;border:1px solid #2d405d;border-radius:7px;padding:18px}
+
+h2{margin:0 0 8px;font-size:19px}
+p{color:#91a4bf;font-size:13px;line-height:1.5}
+
+.inputs,.custom,.buttons,.fit-inputs,.presets{
+  display:flex;gap:6px
+}
+.inputs{align-items:end;margin-top:18px}
+.field{flex:1}
+label{display:block;font-size:10px;color:#a5b5ca;margin-bottom:5px}
+
+input{
+  width:100%;height:38px;background:#101a2c;color:white;
+  border:1px solid #344965;border-radius:5px;padding:8px
+}
+input:focus{outline:none;border-color:#3dd4cc}
+
+.x{padding-bottom:9px;color:#71849e}
+
+.lock{
+  display:flex;justify-content:space-between;align-items:center;
+  border:1px solid #2d405d;padding:9px;margin:14px 0;
+  font-size:12px
+}
+.lock button,.btn{
+  border:1px solid #354a66;background:#14233a;color:white;
+  border-radius:4px;padding:8px;cursor:pointer
+}
+.lock button.on{background:#3dd4cc;color:#102528}
+
+.presets button{flex:1}
+.selected{background:#193b40!important;color:#3dd4cc!important}
+
+.custom{margin-top:6px}
+.custom input{height:32px}
+
+.buttons{margin-top:14px}
+.btn{flex:1}
+.copy{background:#3dd4cc;color:#102528;border-color:#3dd4cc}
+
+.fit{border-top:1px solid #2d405d;margin-top:15px;padding-top:13px}
+.fit button{width:100%;margin-top:6px}
+
+.preview{padding:0;display:flex;flex-direction:column;min-height:520px}
+.preview-head{
+  padding:14px 17px;border-bottom:1px solid #2d405d;
+  display:flex;justify-content:space-between;font-size:11px
+}
+.ratio{color:#3dd4cc}
+
+.area{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:30px;
+  background-image:
+    linear-gradient(#ffffff08 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff08 1px,transparent 1px);
+  background-size:25px 25px
+}
+.rect{
+  width:75%;aspect-ratio:16/9;background:#263c59;
+  border:1px solid #627893;display:grid;place-items:center;
+  text-align:center
+}
+.rect strong{display:block;font-size:35px}
+.rect small{color:#9cafc6}
+
+.stats{display:flex;border-top:1px solid #2d405d}
+.stat{flex:1;padding:12px}
+.stat+ .stat{border-left:1px solid #2d405d}
+.stat small{display:block;color:#778ba7;font-size:9px}
+.stat strong{font-size:13px}
+
+@media(max-width:700px){
+  .main{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+<header>
+    <div>
+        <h1>Aspect Ratio Calculator</h1>
+        <p>Keep proportions right.</p>
+    </div>
+</header>
+<div class="main">
+
+<div class="box">
+
+<h2>Calculator</h2>
+<p>Enter width and height. Lock the ratio to keep proportions.</p>
+
+<div class="inputs">
+  <div class="field">
+    <label>WIDTH</label>
+    <input id="w" type="number" value="1920">
+  </div>
+
+  <div class="x">×</div>
+
+  <div class="field">
+    <label>HEIGHT</label>
+    <input id="h" type="number" value="1080">
+  </div>
+</div>
+
+<div class="lock">
+  Lock ratio
+  <button id="lock" class="on">ON</button>
+</div>
+
+<label>PRESETS</label>
+
+<div class="presets">
+  <button class="btn selected" data-r="16:9">16:9</button>
+  <button class="btn" data-r="4:3">4:3</button>
+  <button class="btn" data-r="1:1">1:1</button>
+  <button class="btn" data-r="9:16">9:16</button>
+</div>
+
+<div class="custom">
+  <input id="rw" value="16" type="number">
+  <input id="rh" value="9" type="number">
+</div>
+
+<div class="buttons">
+  <button class="btn" id="swap">Swap</button>
+  <button class="btn copy" id="copy">Copy CSS</button>
+</div>
+
+<div class="fit">
+  <label>FIT INSIDE</label>
+
+  <div class="fit-inputs">
+    <input id="mw" placeholder="Max width">
+    <input id="mh" placeholder="Max height">
+  </div>
+
+  <button class="btn" id="fit">Calculate best fit</button>
+</div>
+
+</div>
+<div class="box preview">
+
+<div class="preview-head">
+  <span>LIVE PREVIEW</span>
+  <span class="ratio" id="ratio">16 : 9</span>
+</div>
+
+<div class="area">
+  <div class="rect" id="rect">
+    <div>
+      <strong id="big">16:9</strong>
+      <small id="size">1920 × 1080 px</small>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <small>RATIO</small>
+    <strong id="simple">16 : 9</strong>
+  </div>
+  <div class="stat">
+    <small>DECIMAL</small>
+    <strong id="decimal">1.7778</strong>
+  </div>
+  <div class="stat">
+    <small>TYPE</small>
+    <strong id="type">Landscape</strong>
+  </div>
+</div>
+
+</div>
+
+</div>
+</div>
+<script>
+
+let locked=true, ratio=16/9, last="w";
+
+const w=document.getElementById("w");
+const h=document.getElementById("h");
+
+function gcd(a,b){
+  while(b)[a,b]=[b,a%b];
+  return a;
+}
+
+function update(){
+
+  let W=+w.value||1, H=+h.value||1;
+  let g=gcd(W,H), rw=W/g, rh=H/g;
+
+  ratio=W/H;
+
+  document.getElementById("ratio").textContent=rw+" : "+rh;
+  document.getElementById("simple").textContent=rw+" : "+rh;
+  document.getElementById("big").textContent=rw+":"+rh;
+  document.getElementById("size").textContent=W+" × "+H+" px";
+  document.getElementById("decimal").textContent=ratio.toFixed(4);
+
+  document.getElementById("type").textContent=
+    W==H?"Square":W>H?"Landscape":"Portrait";
+
+  document.getElementById("rect").style.aspectRatio=W+"/"+H;
+}
+
+w.oninput=()=>{
+  last="w";
+  if(locked)h.value=Math.round(w.value/ratio);
+  update();
+};
+
+h.oninput=()=>{
+  last="h";
+  if(locked)w.value=Math.round(h.value*ratio);
+  update();
+};
+
+
+document.querySelectorAll("[data-r]").forEach(btn=>{
+  btn.onclick=()=>{
+
+    let [a,b]=btn.dataset.r.split(":").map(Number);
+    ratio=a/b;
+
+    document.getElementById("rw").value=a;
+    document.getElementById("rh").value=b;
+
+    document.querySelectorAll("[data-r]")
+      .forEach(x=>x.classList.remove("selected"));
+
+    btn.classList.add("selected");
+
+    if(last=="h")w.value=Math.round(h.value*ratio);
+    else h.value=Math.round(w.value/ratio);
+
+    update();
+  };
+});
+
+
+document.getElementById("lock").onclick=function(){
+
+  locked=!locked;
+  this.textContent=locked?"ON":"OFF";
+  this.classList.toggle("on",locked);
+};
+
+
+document.getElementById("rw").oninput=()=>{
+  ratio=(+rw.value||1)/(+rh.value||1);
+  if(locked)h.value=Math.round(w.value/ratio);
+  update();
+};
+
+document.getElementById("rh").oninput=()=>{
+  ratio=(+rw.value||1)/(+rh.value||1);
+  if(locked)h.value=Math.round(w.value/ratio);
+  update();
+};
+
+
+document.getElementById("swap").onclick=()=>{
+  [w.value,h.value]=[h.value,w.value];
+  update();
+};
+
+
+document.getElementById("fit").onclick=()=>{
+
+  let mw=+document.getElementById("mw").value;
+  let mh=+document.getElementById("mh").value;
+
+  if(!mw||!mh)return;
+
+  let W=mw,H=W/ratio;
+
+  if(H>mh){
+    H=mh;
+    W=H*ratio;
+  }
+
+  w.value=Math.floor(W);
+  h.value=Math.floor(H);
+
+  update();
+};
+
+
+document.getElementById("copy").onclick=()=>{
+
+  navigator.clipboard.writeText(
+    `aspect-ratio: ${w.value} / ${h.value};`
+  );
+
+  alert("CSS copied!");
+};
+
+update();
+
+</script>
+
+</body>
+</html>
